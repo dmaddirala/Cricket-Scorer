@@ -10,23 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CricketScorer">
         <activity
-            android:name=".TeamDetailsActivity"
-            android:theme="@style/Theme.CricketScorer.NoActionBar"
-            android:screenOrientation="portrait" >
-
-        </activity>
-        <activity
             android:name=".MatchStartActivity"
             android:theme="@style/Theme.CricketScorer.NoActionBar"
+            android:noHistory="true"
             android:screenOrientation="portrait" >
 
         </activity>
 
         <activity
             android:name=".PlayersListActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".NewMatchActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"

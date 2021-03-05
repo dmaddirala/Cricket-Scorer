@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single"
+        android:orderInCategory="1">
         <item
             android:id="@+id/nav_team_players"
             android:icon="@drawable/ic_team_players"
@@ -12,7 +14,7 @@
         <item
             android:id="@+id/nav_score_calculate"
             android:icon="@drawable/ic_score_calculate"
-            android:title="Score Calculate "/>
+            android:title="Score Calculate"/>
 
     </group>
 

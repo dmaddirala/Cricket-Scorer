@@ -4,24 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
+import com.example.cricketscorer.data.Match;
+import com.example.cricketscorer.data.Player;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -30,9 +23,11 @@ public class PlayersListActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<Match> matches;
     private ArrayList<Player> players;
+    private ArrayList<Player> playersRemaining;
     private PlayerAdapter adapter;
     private String TeamNameA, TeamNameB;
-    private int teamCode;
+    private int teamCode, itemPosition;
+    private Match currentMatch;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String MATCH_LIST = "matchList";
     public static final String PLAYER_LIST = "PlayerList";
@@ -43,13 +38,28 @@ public class PlayersListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_players_list);
 
         Bundle extras = getIntent().getExtras();
+        itemPosition = extras.getInt("ItemPosition");
         teamCode = extras.getInt("TeamCode");
         TeamNameA = extras.getString("TeamNameA");
         TeamNameB = extras.getString("TeamNameB");
 
         loadData();
+        currentMatch = matches.get(itemPosition);
+        playersRemaining = new ArrayList<>();
+
+        ArrayList<Integer> playersSelected = new ArrayList<>();
+        playersSelected.addAll(currentMatch.getTeamAPlayers());
+        playersSelected.addAll(currentMatch.getTeamBPlayers());
+
+        for (int i=0; i<players.size(); i++){
+            int playerId = players.get(i).getPlayerId();
+            if (!playersSelected.contains(playerId)){
+                playersRemaining.add(getPlayerById(players, playerId));
+            }
+        }
+
         listView = findViewById(R.id.list_view);
-        adapter = new PlayerAdapter(this, players);
+        adapter = new PlayerAdapter(this, playersRemaining);
         listView.setAdapter(adapter);
 
     }
@@ -64,6 +74,8 @@ public class PlayersListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int itemId = item.getItemId();
+        Intent intent = new Intent( getApplicationContext(), MatchStartActivity.class);
+        ArrayList<Integer> teamPlayers = getPlayerList();
 
         switch (itemId) {
             /*
@@ -73,23 +85,45 @@ public class PlayersListActivity extends AppCompatActivity {
              * ways. (in our humble opinion)
              */
             case R.id.action_done:
+                if (teamCode==1){
+                    currentMatch.setTeamAPlayers(teamPlayers);
+                }else if(teamCode==2){
+                    currentMatch.setTeamBPlayers(teamPlayers);
+                }
 
-                ArrayList<Integer> teamPlayers = getPlayerList();
-                Intent intent = new Intent( getApplicationContext(), NewMatchActivity.class);
+                saveData();
+                intent.putExtra("ItemPosition", itemPosition);
+                startActivity(intent);
+                this.finish();
+                break;
+
+            case R.id.action_add:
 
                 if (teamCode==1){
-                    intent.putExtra("TeamA", teamPlayers);
+                    currentMatch.addTeamAPlayers(teamPlayers);
                 }else if(teamCode==2){
-                    intent.putExtra("TeamB", teamPlayers);
+                    currentMatch.addTeamBPlayers(teamPlayers);
                 }
-                Log.i("TAG", teamPlayers+" ");
-                intent.putExtra("TeamNameA", TeamNameA);
-                intent.putExtra("TeamNameB", TeamNameB);
+
+                saveData();
+                intent.putExtra("ItemPosition", itemPosition);
                 startActivity(intent);
+                this.finish();
+                break;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public Player getPlayerById(ArrayList<Player> players, int id){
+        Player player;
+        for(Player p : players){
+            if(p.getPlayerId()==id){
+                return p;
+            }
+        }
+        return null;
     }
 
     private ArrayList<Integer> getPlayerList(){
@@ -101,11 +135,10 @@ public class PlayersListActivity extends AppCompatActivity {
 //            CheckBox playerCheckBox = (CheckBox) linearLayout.getChildAt(0);
 
             Player currentPlayer = (Player) adapter.getItem(i);
-            String name = currentPlayer.getName();
 
             if (currentPlayer.getCheckBoxState()){
 //                Log.i("TAG", name + " is Checked");
-                teamPlayers.add(i);
+                teamPlayers.add(currentPlayer.getPlayerId());
 
             }
         }

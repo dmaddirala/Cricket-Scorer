@@ -12,12 +12,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cricketscorer.data.Match;
+import com.example.cricketscorer.data.Player;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,14 +37,18 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Match> matches;
     private ArrayList<Player> players;
     private Match newMatch;
-    private Dialog dialogNewMatch;
-    private Button save, cancel;
+    private Dialog dialogNewMatch, dialogDelete;
+    private Button save, cancel, yes, no;
     private EditText teamANameEt, teambNameEt;
+    private int longPressedItemPosition;
+    private TextView dialogMessage;
+    public static final String MATCH_DELETE_MESSAGE = "Delete This Match?";
+    public static final String CLEAR_DATA_MESSAGE = "Clear All Data?";
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String MATCH_LIST = "matchList";
     public static final String PLAYER_LIST = "PlayerList";
 
-    private String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+    private String currentDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date());
     private String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
 
     @Override
@@ -59,8 +65,18 @@ public class MainActivity extends AppCompatActivity {
         dialogNewMatch.setCancelable(true);
         dialogNewMatch.getWindow().getAttributes().windowAnimations = R.style.animation;
 
+        dialogDelete = new Dialog(MainActivity.this);
+        dialogDelete.setContentView(R.layout.dialog_delete);
+        dialogDelete.getWindow().setBackgroundDrawable(getDrawable(R.drawable.background));
+        dialogDelete.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogDelete.setCancelable(true);
+        dialogDelete.getWindow().getAttributes().windowAnimations = R.style.animation;
+
         save = dialogNewMatch.findViewById(R.id.btn_save);
         cancel = dialogNewMatch.findViewById(R.id.btn_cancel);
+        yes = dialogDelete.findViewById(R.id.btn_yes);
+        no = dialogDelete.findViewById(R.id.btn_no);
+        dialogMessage = dialogDelete.findViewById(R.id.tv_message);
         teamANameEt = dialogNewMatch.findViewById(R.id.et_team_a_name);
         teambNameEt = dialogNewMatch.findViewById(R.id.et_team_b_name);
 
@@ -79,6 +95,17 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent( getApplicationContext(), MatchStartActivity.class);
                 intent.putExtra("ItemPosition", position);
                 startActivity(intent);
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                longPressedItemPosition = position;
+                dialogMessage.setText(MATCH_DELETE_MESSAGE);
+                dialogDelete.show();
+                return true;
             }
         });
 
@@ -111,6 +138,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dialogMessage.getText().equals(CLEAR_DATA_MESSAGE)){
+                    clearData();
+                    Toast.makeText(getApplicationContext(), "Data Cleared", Toast.LENGTH_SHORT).show();
+                } else{
+                    matches.remove(longPressedItemPosition);
+                    Toast.makeText(getApplicationContext(), "Match Removed", Toast.LENGTH_SHORT).show();
+                }
+
+                saveData();
+                refresh();
+                dialogDelete.dismiss();
+            }
+        });
+
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogDelete.dismiss();
+
+            }
+        });
+
     }
 
     @Override
@@ -133,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
              */
             case R.id.action_clear:
                 // COMPLETED (14) Pass in this as the ListItemClickListener to the GreenAdapter constructor
-                clearData();
+                dialogMessage.setText(CLEAR_DATA_MESSAGE);
+                dialogDelete.show();
                 return true;
 
             case R.id.action_new_match:
@@ -152,31 +205,31 @@ public class MainActivity extends AppCompatActivity {
     private void setPlayersData() {
         if(players==null || players.isEmpty()){
             players = new ArrayList<>();
-            players.add(new Player("Dhruv Maddirala"));
-            players.add(new Player("Rohit Choudhary"));
-            players.add(new Player("Chintamani Rane"));
-            players.add(new Player("Sudhir Sawant"));
-            players.add(new Player("Shailendra Kambli"));
-            players.add(new Player("Shivam Samleti"));
-            players.add(new Player("Pranay Yenagandula"));
-            players.add(new Player("Prathamesh Sarmalkar"));
-            players.add(new Player("Shailesh Gawde"));
-            players.add(new Player("Akshay Sirimalla"));
-            players.add(new Player("Bhagyaraj Tembulker"));
-            players.add(new Player("Bhushan Gawde"));
-            players.add(new Player("Kunal Manjrekar"));
-            players.add(new Player("Ryan Dsouza"));
-            players.add(new Player("Yagnesh Chawda"));
-            players.add(new Player("Kishor Mestry"));
-            players.add(new Player("Sachin Mestry"));
-            players.add(new Player("Pratham Shivalkar"));
-            players.add(new Player("Sai Rane"));
-            players.add(new Player("Aryan Bhosle"));
-            players.add(new Player("Akshat nagda"));
-            players.add(new Player("Rugved Phansekar"));
-            players.add(new Player("Chinmay Vichare"));
-            players.add(new Player("Mupin Dicholkar"));
-            players.add(new Player("Sumukh Adepu"));
+            players.add(new Player("Dhruv Maddirala", 1));
+            players.add(new Player("Rohit Choudhary",2));
+            players.add(new Player("Chintamani Rane",3));
+            players.add(new Player("Sudhir Sawant",4));
+            players.add(new Player("Shailendra Kambli",5));
+            players.add(new Player("Shivam Samleti",6));
+            players.add(new Player("Pranay Yenagandula",7));
+            players.add(new Player("Prathamesh Sarmalkar",8));
+            players.add(new Player("Shailesh Gawde",9));
+            players.add(new Player("Akshay Sirimalla",10));
+            players.add(new Player("Bhagyaraj Tembulker",11));
+            players.add(new Player("Bhushan Gawde",12));
+            players.add(new Player("Kunal Manjrekar",13));
+            players.add(new Player("Ryan Dsouza",14));
+            players.add(new Player("Yagnesh Chawda",15));
+            players.add(new Player("Kishor Mestry",16));
+            players.add(new Player("Sachin Mestry",17));
+            players.add(new Player("Pratham Shivalkar",18));
+            players.add(new Player("Sai Rane",19));
+            players.add(new Player("Aryan Bhosle",20));
+            players.add(new Player("Akshat nagda",21));
+            players.add(new Player("Rugved Phansekar",22));
+            players.add(new Player("Chinmay Vichare",23));
+            players.add(new Player("Mupin Dicholkar",24));
+            players.add(new Player("Sumukh Adepu",25));
 
             Collections.sort(players, Player.PlayerNameComparator);
 

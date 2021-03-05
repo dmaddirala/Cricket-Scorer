@@ -11,11 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.text.SimpleDateFormat;
+import com.example.cricketscorer.data.Match;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class MatchAdapter extends ArrayAdapter<Match> {
 

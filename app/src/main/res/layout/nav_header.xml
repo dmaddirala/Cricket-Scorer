@@ -10,10 +10,30 @@
     android:layout_height="176dp">
 
     <TextView
+        android:id="@+id/tv_team_A"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Team A\nVS\nTeam B"
+        android:text="Team A"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="VS"
+        android:layout_margin="4dp"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tv_team_B"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Team B"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"/>

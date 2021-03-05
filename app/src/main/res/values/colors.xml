@@ -11,5 +11,7 @@
     <color name="dark_grey">#7A7A7A</color>
     <color name="whatsapp_green">#62D366</color>
     <color name="transparent">#80000000</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00DF00</color>
 
 </resources>

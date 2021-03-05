@@ -1,13 +1,15 @@
-package com.example.cricketscorer;
+package com.example.cricketscorer.data;
 
 import java.util.Comparator;
 
 public class Player {
     String name;
     boolean checkBoxState;
+    int playerId;
 
-    public Player(String name){
+    public Player(String name, int playerId){
         this.name = name;
+        this.playerId = playerId;
 
     }
     /*Comparator for sorting the list by Student Name*/
@@ -35,6 +37,10 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getPlayerId() {
+        return playerId;
     }
 
     public boolean getCheckBoxState() {

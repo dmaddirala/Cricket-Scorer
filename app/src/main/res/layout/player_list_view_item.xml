@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_grey"
     android:layout_margin="4dp"
     android:padding="4dp">
 
@@ -12,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Dhruv"
-        android:textColor="@color/white"
-        android:textSize="32dp"/>
+        android:textColor="@color/dark_grey"
+        android:textSize="24sp"/>
 
 </LinearLayout>
